@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify トラック検索</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Spotify トラック検索</h1>
@@ -18,7 +19,6 @@
         const CLIENT_ID = '7df2178d9d6a43ca9468d830dbf571cd';
         const CLIENT_SECRET = '95e9b09ad73645689b5489c7d5826073';
 
-        // アクセストークンを取得する関数
         async function getAccessToken() {
             const res = await fetch('https://accounts.spotify.com/api/token', {
                 method: 'POST',
@@ -32,7 +32,6 @@
             return data.access_token;
         }
 
-        // トラックを検索する関数
         async function searchTracks(query) {
             const token = await getAccessToken();
             const res = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=10`, {
@@ -42,7 +41,7 @@
             const tracks = data.tracks.items;
 
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = ''; // 検索結果をクリア
+            resultsDiv.innerHTML = '';
 
             if (tracks && tracks.length > 0) {
                 resultsDiv.innerHTML = tracks.map(track => {
@@ -55,9 +54,8 @@
                             <p><strong>Release Date:</strong> ${track.album.release_date}</p>
                             <p><strong>Popularity:</strong> ${track.popularity}</p>
                             <p><strong>Duration:</strong> ${duration}</p>
-                            <img src="${track.album.images[0]?.url || ''}" alt="アルバム画像" style="max-width: 200px;">
+                            <img src="${track.album.images[0]?.url || ''}" alt="アルバム画像">
                             <a href="${track.external_urls.spotify}" target="_blank">Listen on Spotify</a>
-                            <hr>
                         </div>`;
                 }).join('');
             } else {
@@ -65,7 +63,6 @@
             }
         }
 
-        // 検索フォームのイベントリスナー
         document.getElementById('search-form').addEventListener('submit', function (e) {
             e.preventDefault();
             const query = document.getElementById('query').value.trim();

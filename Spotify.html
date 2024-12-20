@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div is="results"></div> 
+    
+    <script>
+        const CLIENT_ID = '7df2178d9d6a43ca9468d830dbf571cd';
+        const CLIENT_SECRET = '95e9b09ad73645689b5489c7d5826073';
+
+        async function getAccessToken(){
+            const res = await fetch('https://accounts.spotify.com/api/token',{
+                method: 'POST',
+                header: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': `Basic ${btoa(`${CLIENT_ID}:${CLIENT_SECRET}`)}`
+                },
+                body: 'grant_type=client_credentials'
+            });
+            return (await res.json()).access_token;
+        }
+
+        async function searchTracks(query){
+            const token = await getAccessToken();
+            const res = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=10`,{
+                headers: { 'Authorization': `Bearer ${token}`}
+            });
+            const data = await res.json();
+            const tracks = data.tracks.items;
+
+            if(tracks.length > 0){
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = tracks.map(track => {
+                    const duration = `${Math.floor(track.duration_ms / 60000)}:${String(Math.floor((track.duration_ms % 60000) / 1000)).padStart(2,'0')}`;
+                    return `
+                        <div>
+                            <h2>${track.name}</h2>
+                            <p><strong>Artist:</strong>${track.artists[0].name}</p>
+                            <p><strong>Album:</strong>${track.album.name}</p>
+                            <p><strong>Release Data:</strong>${track.album.release_data}</p>
+                            <p><strong>Popularity:</strong>${track.popularity}</p>
+                            <p><strong>Duration:</strong>${duration}</p>
+                            <img src="${track.album.images[0].url}" alt="アルバム画像" style="max-width: 200px;">
+                            <a href="${track.external_urls.spotify}" target="_blank">Listen on Spotify</a>
+                            <hr>
+                        </div>`;  
+                }).join('');
+            }else{
+                console.error('No tracks found for:',query);
+            }
+        }
+
+        searchTracks("ado");
+    </script>
+</body>
+</html>

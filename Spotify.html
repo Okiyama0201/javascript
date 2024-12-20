@@ -51,13 +51,13 @@
                     return `
                         <div>
                             <h2>${track.name}</h2>
-                            <p><strong>Artist:</strong> ${track.artists.map(artist => artist.name).join(', ')}</p>
-                            <p><strong>Album:</strong> ${track.album.name}</p>
-                            <p><strong>Release Date:</strong> ${track.album.release_date}</p>
-                            <p><strong>Popularity:</strong> ${track.popularity}</p>
-                            <p><strong>Duration:</strong> ${duration}</p>
+                            <p><strong>アーティスト:</strong> ${track.artists.map(artist => artist.name).join(', ')}</p>
+                            <p><strong>アルバム:</strong> ${track.album.name}</p>
+                            <p><strong>リリース日:</strong> ${track.album.release_date}</p>
+                            <p><strong>人気度:</strong> ${track.popularity}</p>
+                            <p><strong>再生時間:</strong> ${duration}</p>
                             <img src="${track.album.images[0]?.url || ''}" alt="アルバム画像" style="max-width: 200px;">
-                            <a href="${track.external_urls.spotify}" target="_blank">Listen on Spotify</a>
+                            <a href="${track.external_urls.spotify}" target="_blank">曲を再生する</a>
                             <hr>
                         </div>`;
                 }).join('');
